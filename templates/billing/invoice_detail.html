@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}{{ invoice.invoice_no }}{% endblock %}
+{% block content %}
+<div class="page-header d-flex justify-content-between">
+  <h5 class="mb-0">Invoice {{ invoice.invoice_no }}</h5>
+  <div><button onclick="window.print()" class="btn btn-light btn-sm">Print</button> <a href="{% url 'billing:invoice_pdf' invoice.pk %}" target="_blank" class="btn btn-light btn-sm"><i class="bi bi-filetype-pdf"></i> Download PDF</a></div>
+</div>
+<div class="row g-3">
+  <div class="col-md-8">
+    <div class="card card-stat p-3">
+      <p><b>Patient:</b> {{ invoice.patient.name }} ({{ invoice.patient.reg_id }}) &nbsp; <b>Branch:</b> {{ invoice.branch }}</p>
+      <p><b>Date:</b> {{ invoice.invoice_date }} &nbsp; <b>Status:</b> {{ invoice.get_status_display }}</p>
+      <table class="table table-sm">
+        <thead><tr><th>Description</th><th>Qty</th><th>Unit Price</th><th>Amount</th></tr></thead>
+        <tbody>{% for item in invoice.items.all %}<tr><td>{{ item.description }}</td><td>{{ item.quantity }}</td><td>₹{{ item.unit_price }}</td><td>₹{{ item.amount }}</td></tr>{% endfor %}</tbody>
+        <tfoot>
+          <tr><th colspan="3" class="text-end">Discount</th><th>₹{{ invoice.discount }}</th></tr>
+          <tr><th colspan="3" class="text-end">Total</th><th>₹{{ invoice.total_amount }}</th></tr>
+          <tr><th colspan="3" class="text-end">Paid</th><th>₹{{ invoice.amount_paid }}</th></tr>
+          <tr><th colspan="3" class="text-end">Balance Due</th><th>₹{{ invoice.balance_due }}</th></tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card card-stat p-3">
+      <h6>Payments</h6>
+      <ul class="list-group list-group-flush mb-3">
+        {% for p in invoice.payments.all %}
+          <li class="list-group-item small">₹{{ p.amount }} on {{ p.paid_on }} ({{ p.get_mode_display }})
+          {% if p.reference_no %}<br>Receipt: {{ p.reference_no }}{% endif %}
+          {% if p.cheque_no %}<br>Cheque: {{ p.cheque_no }} {{ p.cheque_status }}{% endif %}</li>
+        {% empty %}<li class="list-group-item text-muted small">No payments recorded.</li>{% endfor %}
+      </ul>
+      {% if invoice.balance_due > 0 %}
+      <form method="post">
+        {% csrf_token %}
+        {% include "_form_fields.html" with form=pform field_col=12 %}
+        <button class="btn btn-sm btn-primary w-100 mt-2">Record Payment</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

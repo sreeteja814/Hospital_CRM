@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: clinic-crm
+    runtime: docker
+    plan: free
+    healthCheckPath: /accounts/login/
+    envVars:
+      - key: DJANGO_DEBUG
+        value: "0"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: clinic-crm-db
+          property: connectionString
+      - key: DJANGO_SUPERUSER_USERNAME
+        value: admin
+      - key: DJANGO_SUPERUSER_PASSWORD
+        sync: false   # you'll be prompted to enter this in the Render dashboard
+
+databases:
+  - name: clinic-crm-db
+    plan: free
+    databaseName: clinic_crm

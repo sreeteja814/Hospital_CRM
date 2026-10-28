@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<div class="page-header"><h5 class="mb-0">Reports</h5></div>
+<div class="row g-3">
+  <div class="col-md-6"><div class="card card-stat p-3"><h6>Appointments by Status</h6><canvas id="apptChart" height="180"></canvas></div></div>
+  <div class="col-md-6"><div class="card card-stat p-3"><h6>Leads by Source</h6><canvas id="leadChart" height="180"></canvas></div></div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+new Chart(document.getElementById('apptChart'), {
+  type: 'bar',
+  data: { labels: [{% for s in appointments_by_status %}"{{ s.status }}",{% endfor %}], datasets: [{ label: 'Appointments', data: [{% for s in appointments_by_status %}{{ s.total }},{% endfor %}], backgroundColor: '#5b21b6' }] }
+});
+new Chart(document.getElementById('leadChart'), {
+  type: 'doughnut',
+  data: { labels: [{% for l in leads_by_source %}"{{ l.lead_source__name|default:'Unknown' }}",{% endfor %}], datasets: [{ data: [{% for l in leads_by_source %}{{ l.total }},{% endfor %}] }] }
+});
+</script>
+{% endblock %}

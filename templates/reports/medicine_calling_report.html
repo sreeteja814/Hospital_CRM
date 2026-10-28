@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Medicine Calling{% endblock %}
+{% block content %}
+<div class="page-header"><h5 class="mb-0">Medicine Calling</h5></div>
+<p class="text-muted small">Patients with a tracked medicine course, ordered by end date. Negative days = overdue for a refill call.</p>
+<div class="card card-stat"><table class="table table-hover mb-0">
+<thead><tr><th>Patient</th><th>Medicine Start</th><th>Medicine End</th><th>Days Left</th><th>Better %</th><th>Next Call</th><th>Called By</th></tr></thead>
+<tbody>{% for l in logs %}<tr><td>{{ l.patient|default:l.enquiry }}</td><td>{{ l.medicine_start_date|default:"—" }}</td><td>{{ l.medicine_end_date }}</td>
+<td class="{% if l.medicine_remainder_days < 0 %}text-danger{% endif %}">{{ l.medicine_remainder_days }}</td>
+<td>{{ l.better_patient_percent|default:"—" }}</td><td>{{ l.next_calling_date|default:"—" }}</td><td>{{ l.called_by }}</td></tr>
+{% empty %}<tr><td colspan="7" class="text-muted p-3">No medicine tracking logged yet.</td></tr>{% endfor %}</tbody>
+</table></div>
+{% endblock %}

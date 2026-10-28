@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Doctor Report{% endblock %}
+{% block content %}
+<div class="page-header"><h5 class="mb-0">Doctor Report</h5></div>
+<div class="card card-stat"><table class="table table-hover mb-0">
+<thead><tr><th>Doctor</th><th>Patients</th><th>Appointments</th><th>Consultations</th></tr></thead>
+<tbody>{% for d in doctors %}<tr><td>{{ d.get_full_name|default:d.username }}</td><td>{{ d.total_patients }}</td><td>{{ d.total_appointments }}</td><td>{{ d.total_consultations }}</td></tr>{% empty %}<tr><td colspan="4" class="text-muted p-3">No doctors yet.</td></tr>{% endfor %}</tbody>
+</table></div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Employee Incentive Report{% endblock %}
+{% block content %}
+<div class="page-header"><h5 class="mb-0">Employee Incentive Report</h5></div>
+<div class="card card-stat"><table class="table table-hover mb-0">
+<thead><tr><th>Employee</th><th>Month</th><th>Amount</th><th>Reason</th></tr></thead>
+<tbody>{% for i in incentives %}<tr><td>{{ i.employee }}</td><td>{{ i.month|date:"M Y" }}</td><td>₹{{ i.amount }}</td><td>{{ i.reason }}</td></tr>{% empty %}<tr><td colspan="4" class="text-muted p-3">No incentive records yet.</td></tr>{% endfor %}</tbody>
+</table></div>
+{% endblock %}

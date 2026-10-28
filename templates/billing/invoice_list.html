@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Billing{% endblock %}
+{% block content %}
+<div class="page-header"><h5 class="mb-0">Billing</h5></div>
+<div class="card card-stat">
+<table class="table table-hover mb-0">
+  <thead><tr><th>Invoice #</th><th>Patient</th><th>Branch</th><th>Date</th><th>Total</th><th>Balance</th><th>Status</th></tr></thead>
+  <tbody>
+  {% for i in invoices %}
+    <tr><td><a href="{% url 'billing:invoice_detail' i.pk %}">{{ i.invoice_no }}</a></td><td>{{ i.patient.name }}</td><td>{{ i.branch }}</td><td>{{ i.invoice_date }}</td>
+    <td>₹{{ i.total_amount }}</td><td>₹{{ i.balance_due }}</td><td><span class="badge text-bg-light border">{{ i.get_status_display }}</span></td></tr>
+  {% empty %}<tr><td colspan="7" class="text-muted p-3">No invoices yet.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

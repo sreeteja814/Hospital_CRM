@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @page { size: A4; margin: 2cm; }
+  body { font-family: Helvetica, Arial, sans-serif; font-size: 11pt; color: #222; }
+  h1 { font-size: 18pt; color: #5b21b6; margin-bottom: 0; }
+  .muted { color: #666; font-size: 9pt; }
+  table { width: 100%; border-collapse: collapse; margin-top: 14px; }
+  th, td { border: 1px solid #ddd; padding: 6px 8px; text-align: left; font-size: 10pt; }
+  th { background: #f1ecfb; }
+  .totals td { border: none; text-align: right; }
+  .totals .label { font-weight: bold; }
+  .header-row { width: 100%; }
+  .header-row td { border: none; padding: 0; }
+</style>
+</head>
+<body>
+  <table class="header-row"><tr>
+    <td><h1>INVOICE</h1><div class="muted">{{ invoice.branch.name }}</div></td>
+    <td style="text-align:right;"><b>{{ invoice.invoice_no }}</b><br>Date: {{ invoice.invoice_date }}<br>Status: {{ invoice.get_status_display }}</td>
+  </tr></table>
+  <p><b>Patient:</b> {{ invoice.patient.name }} ({{ invoice.patient.reg_id }})<br><b>Mobile:</b> {{ invoice.patient.mobile_number }}</p>
+  <table>
+    <thead><tr><th>Description</th><th>Qty</th><th>Unit Price</th><th>Amount</th></tr></thead>
+    <tbody>{% for item in invoice.items.all %}<tr><td>{{ item.description }}</td><td>{{ item.quantity }}</td><td>Rs. {{ item.unit_price }}</td><td>Rs. {{ item.amount }}</td></tr>{% endfor %}</tbody>
+  </table>
+  <table class="totals">
+    <tr><td class="label" style="width:80%">Discount</td><td>Rs. {{ invoice.discount }}</td></tr>
+    <tr><td class="label">Total</td><td>Rs. {{ invoice.total_amount }}</td></tr>
+    <tr><td class="label">Paid</td><td>Rs. {{ invoice.amount_paid }}</td></tr>
+    <tr><td class="label">Balance Due</td><td>Rs. {{ invoice.balance_due }}</td></tr>
+  </table>
+  <p class="muted" style="margin-top:30px;">Payment mode: {{ invoice.get_payment_mode_display }}. Thank you for visiting {{ invoice.branch.name }}.</p>
+</body>
+</html>

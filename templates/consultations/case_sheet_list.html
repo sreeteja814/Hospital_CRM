@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Case Sheet - {{ patient.name }}{% endblock %}
+{% block content %}
+<div class="page-header"><h5 class="mb-0">Case Sheet History - {{ patient.name }}</h5></div>
+{% for c in consultations %}
+<div class="card card-stat p-3 mb-2">
+  <div class="d-flex justify-content-between"><b>{{ c.consulted_date }}</b><span>{{ c.doctor }}</span></div>
+  {% if c.miasmatic_diagnosis %}<p class="mb-1 small"><b>Miasmatic Diagnosis:</b> {{ c.miasmatic_diagnosis }}</p>{% endif %}
+  {% if c.bp or c.pulse %}<p class="mb-1 small"><b>Vitals:</b> BP {{ c.bp|default:"—" }}, Pulse {{ c.pulse|default:"—" }}, Wt {{ c.weight_kg|default:"—" }}kg</p>{% endif %}
+  <p class="mb-1">{{ c.clinical_observation|linebreaksbr }}</p>
+  <a href="{% url 'consultations:prescription_pdf' c.pk %}" target="_blank" class="btn btn-sm btn-outline-primary mb-1">Download Prescription PDF</a>
+  {% if c.prescriptions.all %}
+  <ul class="small mb-0">{% for p in c.prescriptions.all %}<li>{{ p.medicine_name }} — {{ p.dosage }} ({{ p.duration_days }} days)</li>{% endfor %}</ul>
+  {% endif %}
+</div>
+{% empty %}<p class="text-muted">No consultations recorded.</p>{% endfor %}
+{% endblock %}

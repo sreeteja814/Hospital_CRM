@@ -1,0 +1,11 @@
+Django>=4.2,<6
+PyMySQL>=1.1
+Pillow>=10.0
+django-widget-tweaks>=1.5
+xhtml2pdf>=0.2.18
+requests>=2.31
+
+gunicorn>=22.0
+whitenoise>=6.6
+dj-database-url>=2.1
+psycopg2-binary>=2.9

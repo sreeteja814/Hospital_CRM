@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Appointments{% endblock %}
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+  <h5 class="mb-0">Appointments</h5>
+  <form method="get" class="d-flex gap-2"><input type="date" name="date" value="{{ day }}" class="form-control form-control-sm"><button class="btn btn-sm btn-light">Go</button></form>
+</div>
+<div class="card card-stat">
+<table class="table table-hover mb-0">
+  <thead><tr><th>Patient</th><th>Reg ID</th><th>Branch</th><th>Doctor</th><th>Slot</th><th>Type</th><th>Status</th><th>Consult Fee</th><th>Payment Due</th><th></th></tr></thead>
+  <tbody>
+  {% for a in appointments %}
+    <tr>
+      <td><a href="{% url 'patients:patient_detail' a.patient.pk %}">{{ a.patient.name }}</a></td>
+      <td>{{ a.patient.reg_id }}</td><td>{{ a.branch }}</td><td>{{ a.doctor|default:"—" }}</td><td>{{ a.slot_time }}</td>
+      <td>{{ a.get_appt_type_display }}</td>
+      <td><span class="badge text-bg-light border">{{ a.get_status_display }}</span></td>
+      <td>₹{{ a.consult_fee }}</td><td>₹{{ a.payment_due }}</td>
+      <td>
+        <form method="post" action="{% url 'appointments:appointment_update_status' a.pk %}" class="d-flex gap-1">
+          {% csrf_token %}
+          <select name="status" class="form-select form-select-sm">
+            {% for val, label in a.Status.choices %}<option value="{{ val }}" {% if val == a.status %}selected{% endif %}>{{ label }}</option>{% endfor %}
+          </select>
+          <button class="btn btn-sm btn-outline-primary">Set</button>
+        </form>
+      </td>
+    </tr>
+  {% empty %}<tr><td colspan="10" class="text-muted p-3">No appointments for this date.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

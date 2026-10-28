@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}HR - Employees{% endblock %}
+{% block content %}
+<div class="page-header"><h5 class="mb-0">HR - Employees</h5></div>
+<div class="card card-stat">
+<table class="table table-hover mb-0">
+  <thead><tr><th>Code</th><th>Name</th><th>Role</th><th>Branch</th><th>Status</th><th>Joined</th><th></th></tr></thead>
+  <tbody>
+  {% for e in employees %}
+    <tr><td>{{ e.employee_code }}</td><td>{{ e.user.get_full_name|default:e.user.username }}</td><td>{{ e.user.get_role_display }}</td>
+    <td>{{ e.branch|default:"—" }}</td><td><span class="badge text-bg-light border">{{ e.get_status_display }}</span></td>
+    <td>{{ e.date_of_joining|default:"—" }}</td><td><a href="{% url 'hr:employee_attendance' e.pk %}" class="btn btn-sm btn-outline-primary">Attendance</a></td></tr>
+  {% empty %}<tr><td colspan="7" class="text-muted p-3">No employees yet. Add staff via Staff menu or /admin/.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

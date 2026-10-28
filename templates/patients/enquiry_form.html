@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="page-header"><h5 class="mb-0">{{ title }}</h5></div>
+<div class="card card-stat p-4">
+<form method="post">
+{% csrf_token %}
+<div class="row">{% include "_form_fields.html" with form=form field_col=4 %}</div>
+<button class="btn btn-primary mt-2">Save Enquiry</button> <a href="{% url 'patients:enquiry_list' %}" class="btn btn-outline-secondary mt-2">Cancel</a>
+</form>
+</div>
+{% endblock %}

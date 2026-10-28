@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @page { size: A4; margin: 2cm; }
+  body { font-family: Helvetica, Arial, sans-serif; font-size: 11pt; color: #222; }
+  h1 { font-size: 16pt; color: #5b21b6; margin-bottom: 2px; }
+  .muted { color: #666; font-size: 9pt; }
+  table { width: 100%; border-collapse: collapse; margin-top: 14px; }
+  th, td { border: 1px solid #ddd; padding: 6px 8px; text-align: left; font-size: 10pt; }
+  th { background: #f1ecfb; }
+  .section-title { font-weight: bold; margin-top: 16px; color: #5b21b6; }
+</style>
+</head>
+<body>
+  <h1>Prescription</h1>
+  <div class="muted">Consulted on {{ c.consulted_date }} &middot; Dr. {{ c.doctor.get_full_name|default:c.doctor.username }}</div>
+  <p><b>Patient:</b> {{ c.patient.name }} ({{ c.patient.reg_id }})<br>
+  <b>Age/Gender:</b> {{ c.patient.age|default:"-" }} / {{ c.patient.get_gender_display }}<br>
+  <b>Treatment:</b> {{ c.treatment|default:"-" }}</p>
+  {% if c.bp or c.pulse or c.weight_kg %}
+  <div class="section-title">Vitals</div>
+  <p>BP: {{ c.bp|default:"-" }} &middot; Pulse: {{ c.pulse|default:"-" }} &middot; Weight: {{ c.weight_kg|default:"-" }} kg &middot; Temp: {{ c.temperature|default:"-" }}</p>
+  {% endif %}
+  {% if c.miasmatic_diagnosis %}<div class="section-title">Miasmatic Diagnosis</div><p>{{ c.miasmatic_diagnosis }}</p>{% endif %}
+  <div class="section-title">Clinical Observation</div>
+  <p>{{ c.clinical_observation|linebreaksbr }}</p>
+  {% if c.dos_and_donts %}<div class="section-title">DOs and DON'Ts</div><p>{{ c.dos_and_donts|linebreaksbr }}</p>{% endif %}
+  <div class="section-title">Prescribed Medicines</div>
+  <table>
+    <thead><tr><th>Medicine</th><th>Dosage</th><th>Duration</th><th>Notes</th></tr></thead>
+    <tbody>{% for p in c.prescriptions.all %}<tr><td>{{ p.medicine_name }}</td><td>{{ p.dosage }}</td><td>{{ p.duration_days }} days</td><td>{{ p.notes }}</td></tr>{% endfor %}</tbody>
+  </table>
+  {% if c.followup_date %}<p style="margin-top:16px;"><b>Follow-up date:</b> {{ c.followup_date }}</p>{% endif %}
+</body>
+</html>

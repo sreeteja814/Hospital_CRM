@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Book Appointment{% endblock %}
+{% block content %}
+<div class="page-header"><h5 class="mb-0">Book Appointment - {{ patient.name }}</h5></div>
+<div class="card card-stat p-4">
+<form method="post" id="appt-form">
+{% csrf_token %}
+<div class="row">{% include "_form_fields.html" with form=form field_col=4 %}</div>
+<div class="mb-3">
+  <label class="form-label small text-muted">Available slots for the doctor/branch/date above:</label>
+  <div id="slot-suggestions" class="d-flex flex-wrap gap-2"><span class="text-muted small">Pick a branch, doctor and date to see open slots.</span></div>
+</div>
+<button class="btn btn-primary mt-2">Book</button>
+</form>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+(function () {
+  const branchEl = document.getElementById('id_branch');
+  const doctorEl = document.getElementById('id_doctor');
+  const dateEl = document.getElementById('id_appointment_date');
+  const slotInput = document.getElementById('id_slot_time');
+  const box = document.getElementById('slot-suggestions');
+  async function refreshSlots() {
+    const branch = branchEl && branchEl.value;
+    const doctor = doctorEl && doctorEl.value;
+    const day = dateEl && dateEl.value;
+    if (!branch || !doctor || !day) { box.innerHTML = '<span class="text-muted small">Pick a branch, doctor and date to see open slots.</span>'; return; }
+    box.innerHTML = '<span class="text-muted small">Loading…</span>';
+    try {
+      const res = await fetch(`/appointments/available-slots/?branch=${branch}&doctor=${doctor}&date=${day}`);
+      const data = await res.json();
+      if (!data.slots || data.slots.length === 0) { box.innerHTML = '<span class="text-muted small">No pre-defined slots — type a time manually.</span>'; return; }
+      box.innerHTML = '';
+      data.slots.forEach(function (s) {
+        const btn = document.createElement('button');
+        btn.type = 'button'; btn.className = 'btn btn-sm btn-outline-primary'; btn.textContent = s;
+        btn.onclick = function () { slotInput.value = s; };
+        box.appendChild(btn);
+      });
+    } catch (e) { box.innerHTML = '<span class="text-muted small">Could not load slots.</span>'; }
+  }
+  [branchEl, doctorEl, dateEl].forEach(function (el) { if (el) el.addEventListener('change', refreshSlots); });
+  refreshSlots();
+})();
+</script>
+{% endblock %}

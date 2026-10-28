@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block title %}New Invoice{% endblock %}
+{% block content %}
+<div class="page-header"><h5 class="mb-0">New Invoice - {{ patient.name }}</h5></div>
+<div class="card card-stat p-4">
+<form method="post">
+{% csrf_token %}
+<div class="row">{% include "_form_fields.html" with form=form field_col=4 %}</div>
+<div class="section-title">Items</div>
+{{ formset.management_form }}
+<table class="table table-sm">
+  <thead><tr><th>Description</th><th>Qty</th><th>Unit Price</th></tr></thead>
+  <tbody>
+  {% for iform in formset %}
+    <tr><td>{{ iform.description|add_class:"form-control form-control-sm" }}</td><td>{{ iform.quantity|add_class:"form-control form-control-sm" }}</td><td>{{ iform.unit_price|add_class:"form-control form-control-sm" }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+<button class="btn btn-primary mt-2">Create Invoice</button>
+</form>
+</div>
+{% endblock %}

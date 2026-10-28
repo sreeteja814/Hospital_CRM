@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Message Log{% endblock %}
+{% block content %}
+<div class="page-header"><h5 class="mb-0">WhatsApp / SMS Message Log</h5></div>
+<p class="text-muted small">Messages show as "Logged only" until a real WhatsApp/SMS provider is configured — see README.md.</p>
+<div class="card card-stat">
+<table class="table table-hover mb-0">
+  <thead><tr><th>Date</th><th>To</th><th>Channel</th><th>Status</th><th>Message</th><th>Patient/Enquiry</th></tr></thead>
+  <tbody>
+  {% for l in logs %}
+    <tr><td>{{ l.created_at|date:"d-m-Y H:i" }}</td><td>{{ l.to_number }}</td><td>{{ l.get_channel_display }}</td>
+    <td><span class="badge text-bg-light border">{{ l.get_status_display }}</span></td><td>{{ l.message|truncatewords:15 }}</td>
+    <td>{{ l.patient|default:l.enquiry|default:"—" }}</td></tr>
+  {% empty %}<tr><td colspan="6" class="text-muted p-3">No messages sent yet.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

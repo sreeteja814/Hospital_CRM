@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Tasks{% endblock %}
+{% block content %}
+<div class="page-header"><h5 class="mb-0">Tasks</h5></div>
+<div class="row g-3">
+  <div class="col-md-4"><div class="card card-stat p-3">
+    <h6>New Task</h6>
+    <form method="post">{% csrf_token %}{% include "_form_fields.html" with form=form field_col=12 %}<button class="btn btn-primary w-100 mt-2">Add Task</button></form>
+  </div></div>
+  <div class="col-md-8"><div class="card card-stat p-3">
+    <table class="table table-sm"><thead><tr><th>Title</th><th>Due</th><th>Priority</th><th>Status</th><th></th></tr></thead>
+    <tbody>{% for t in tasks %}<tr><td>{{ t.title }}</td><td>{{ t.due_date|default:"—" }}</td><td>{{ t.get_priority_display }}</td><td>{{ t.get_status_display }}</td>
+    <td>{% if t.status != 'DONE' %}<a href="{% url 'tasks:task_mark_done' t.pk %}" class="btn btn-sm btn-outline-success">Mark Done</a>{% endif %}</td></tr>
+    {% empty %}<tr><td colspan="5" class="text-muted">No tasks.</td></tr>{% endfor %}</tbody></table>
+  </div></div>
+</div>
+{% endblock %}

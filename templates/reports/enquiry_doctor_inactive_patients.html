@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Enquiry Doctor Inactive Patients{% endblock %}
+{% block content %}
+<div class="page-header"><h5 class="mb-0">Enquiry Doctor Inactive Patients Report</h5></div>
+<p class="text-muted small">Patients with no call logged since {{ cutoff }} (30+ days).</p>
+<div class="card card-stat"><table class="table table-hover mb-0">
+<thead><tr><th>Reg ID</th><th>Patient</th><th>Doctor</th><th>Branch</th><th>Last Call</th></tr></thead>
+<tbody>{% for p in patients %}<tr><td>{{ p.reg_id }}</td><td><a href="{% url 'patients:patient_detail' p.pk %}">{{ p.name }}</a></td><td>{{ p.assigned_doctor|default:"—" }}</td><td>{{ p.branch }}</td><td>{{ p.last_call|date:"d-m-Y"|default:"Never" }}</td></tr>{% empty %}<tr><td colspan="5" class="text-muted p-3">No inactive patients.</td></tr>{% endfor %}</tbody>
+</table></div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Followup Calling Report{% endblock %}
+{% block content %}
+<div class="page-header"><h5 class="mb-0">Followup Calling Report</h5></div>
+<form method="get" class="row g-2 mb-3">
+  <div class="col-auto"><label class="form-label small">From Date</label><input type="date" name="from_date" value="{{ from_date|default:'' }}" class="form-control form-control-sm"></div>
+  <div class="col-auto"><label class="form-label small">To Date</label><input type="date" name="to_date" value="{{ to_date|default:'' }}" class="form-control form-control-sm"></div>
+  <div class="col-auto align-self-end"><button class="btn btn-primary btn-sm">Submit</button></div>
+</form>
+<div class="card card-stat"><table class="table table-hover mb-0">
+<thead><tr><th>Date</th><th>Patient/Enquiry</th><th>Status</th><th>Comments</th><th>Better %</th><th>Next Call</th><th>Called By</th></tr></thead>
+<tbody>{% for l in logs %}<tr><td>{{ l.created_at|date:"d-m-Y H:i" }}</td><td>{{ l.patient|default:l.enquiry }}</td><td>{{ l.get_call_status_display }}</td><td>{{ l.comments|truncatewords:15 }}</td>
+<td>{{ l.better_patient_percent|default:"—" }}</td><td>{{ l.next_calling_date|default:"—" }}</td><td>{{ l.called_by }}</td></tr>
+{% empty %}<tr><td colspan="7" class="text-muted p-3">No calls match this filter.</td></tr>{% endfor %}</tbody>
+</table></div>
+{% endblock %}

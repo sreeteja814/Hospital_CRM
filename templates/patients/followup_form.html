@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Log Follow-up{% endblock %}
+{% block content %}
+<div class="page-header"><h5 class="mb-0">Follow-up Visit for {{ patient.name }}</h5></div>
+<div class="card card-stat p-4">
+<form method="post">
+{% csrf_token %}
+<div class="row">{% include "_form_fields.html" with form=form field_col=6 %}</div>
+<button class="btn btn-primary mt-2">Save</button>
+</form>
+</div>
+{% endblock %}

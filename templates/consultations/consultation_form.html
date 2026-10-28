@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block title %}New Consultation{% endblock %}
+{% block content %}
+<div class="page-header"><h5 class="mb-0">Case Sheet - {{ patient.name }} ({{ patient.reg_id }})</h5></div>
+<div class="card card-stat p-4">
+<form method="post">
+{% csrf_token %}
+
+<div class="section-title">Visit</div>
+<div class="row">
+  <div class="col-md-3 mb-3"><label class="form-label">Doctor</label>{{ form.doctor|add_class:"form-control" }}</div>
+  <div class="col-md-3 mb-3"><label class="form-label">Treatment</label>{{ form.treatment|add_class:"form-control" }}</div>
+  <div class="col-md-3 mb-3"><label class="form-label">Consulted Date *</label>{{ form.consulted_date|add_class:"form-control" }}</div>
+  <div class="col-md-3 mb-3"><label class="form-label">Appointment</label>{{ form.appointment|add_class:"form-control" }}</div>
+</div>
+
+<div class="section-title">Preliminary Data</div>
+<div class="row">
+  <div class="col-md-6 mb-3"><label class="form-label">Presenting Complaints</label>{{ form.presenting_complaints|add_class:"form-control" }}</div>
+  <div class="col-md-6 mb-3"><label class="form-label">Personal History</label>{{ form.personal_history|add_class:"form-control" }}</div>
+</div>
+
+<div class="section-title">Vitals / General Examination</div>
+<div class="row">
+  <div class="col-md-2 mb-3"><label class="form-label">BP</label>{{ form.bp|add_class:"form-control" }}</div>
+  <div class="col-md-2 mb-3"><label class="form-label">Pulse</label>{{ form.pulse|add_class:"form-control" }}</div>
+  <div class="col-md-2 mb-3"><label class="form-label">Weight (KG)</label>{{ form.weight_kg|add_class:"form-control" }}</div>
+  <div class="col-md-2 mb-3"><label class="form-label">Height (CM)</label>{{ form.height_cm|add_class:"form-control" }}</div>
+  <div class="col-md-2 mb-3"><label class="form-label">Temp</label>{{ form.temperature|add_class:"form-control" }}</div>
+  <div class="col-md-2 mb-3"><label class="form-label">BMI</label>{{ form.bmi|add_class:"form-control" }}</div>
+  <div class="col-md-12 mb-3"><label class="form-label">Systemic Examination (O/E)</label>{{ form.systemic_examination|add_class:"form-control" }}</div>
+</div>
+
+<div class="section-title">Homeopathic Case-Taking</div>
+<div class="row">
+  <div class="col-md-6 mb-3"><label class="form-label">Particular</label>{{ form.particular|add_class:"form-control" }}</div>
+  <div class="col-md-6 mb-3"><label class="form-label">Miasmatic Diagnosis</label>{{ form.miasmatic_diagnosis|add_class:"form-control" }}</div>
+  <div class="col-md-6 mb-3"><label class="form-label">Mental General</label>{{ form.mental_general|add_class:"form-control" }}</div>
+  <div class="col-md-6 mb-3"><label class="form-label">Physical General</label>{{ form.physical_general|add_class:"form-control" }}</div>
+  <div class="col-md-6 mb-3"><label class="form-label">Repertorial Result</label>{{ form.repertorial_result|add_class:"form-control" }}</div>
+  <div class="col-md-6 mb-3"><label class="form-label">Analysis &amp; Evaluation / Repertorial Totality</label>{{ form.analysis_evaluation|add_class:"form-control" }}</div>
+</div>
+
+<div class="section-title">Plan</div>
+<div class="row">
+  <div class="col-md-6 mb-3"><label class="form-label">Management</label>{{ form.management|add_class:"form-control" }}</div>
+  <div class="col-md-6 mb-3"><label class="form-label">Diet</label>{{ form.diet|add_class:"form-control" }}</div>
+  <div class="col-md-6 mb-3"><label class="form-label">Exercises</label>{{ form.exercises|add_class:"form-control" }}</div>
+  <div class="col-md-6 mb-3"><label class="form-label">Nutrition</label>{{ form.nutrition|add_class:"form-control" }}</div>
+  <div class="col-md-6 mb-3"><label class="form-label">Present Medication</label>{{ form.present_medication|add_class:"form-control" }}</div>
+  <div class="col-md-6 mb-3"><label class="form-label">Level of Assurance</label>{{ form.level_of_assurance|add_class:"form-control" }}</div>
+  <div class="col-md-6 mb-3"><label class="form-label">Criteria / Future Plan of Rx</label>{{ form.criteria_future_plan_rx|add_class:"form-control" }}</div>
+  <div class="col-md-6 mb-3"><label class="form-label">DOs and DON'Ts</label>{{ form.dos_and_donts|add_class:"form-control" }}</div>
+</div>
+
+<div class="section-title">Clinical Observation</div>
+<div class="row">
+  <div class="col-md-4 mb-3"><label class="form-label">Progress</label>{{ form.progress|add_class:"form-control" }}</div>
+  <div class="col-md-4 mb-3"><label class="form-label">Suggested Duration</label>{{ form.suggested_duration|add_class:"form-control" }}</div>
+  <div class="col-md-4 mb-3"><label class="form-label">Patient Status</label>{{ form.patient_status|add_class:"form-control" }}</div>
+  <div class="col-md-4 mb-3"><label class="form-label">Package Duration</label>{{ form.package_duration|add_class:"form-control" }}</div>
+  <div class="col-md-4 mb-3"><label class="form-label">Package End Date</label>{{ form.package_end_date|add_class:"form-control" }}</div>
+  <div class="col-md-4 mb-3"><label class="form-label">Medicine Days</label>{{ form.medicine_days|add_class:"form-control" }}</div>
+  <div class="col-md-4 mb-3"><label class="form-label">Follow-up Date</label>{{ form.followup_date|add_class:"form-control" }}</div>
+  <div class="col-md-8 mb-3"><label class="form-label">Clinical Observation</label>{{ form.clinical_observation|add_class:"form-control" }}</div>
+</div>
+
+<div class="section-title">Prescription</div>
+{{ formset.management_form }}
+<table class="table table-sm">
+  <thead><tr><th>Medicine</th><th>Dosage</th><th>Days</th><th>Notes</th></tr></thead>
+  <tbody>
+  {% for pform in formset %}
+    <tr>
+      <td>{{ pform.medicine_name|add_class:"form-control form-control-sm" }}</td>
+      <td>{{ pform.dosage|add_class:"form-control form-control-sm" }}</td>
+      <td>{{ pform.duration_days|add_class:"form-control form-control-sm" }}</td>
+      <td>{{ pform.notes|add_class:"form-control form-control-sm" }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<button class="btn btn-primary mt-2">Save Case Sheet</button>
+</form>
+</div>
+{% endblock %}

@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block title %}{{ patient.name }}{% endblock %}
+{% block content %}
+<div class="page-header d-flex justify-content-between flex-wrap gap-2">
+  <h5 class="mb-0">{{ patient.name }} <small class="opacity-75">({{ patient.reg_id }})</small></h5>
+  <div>
+    <a href="{% url 'patients:patient_update' patient.pk %}" class="btn btn-light btn-sm">Edit Details</a>
+    <a href="{% url 'consultations:consultation_create' patient.pk %}" class="btn btn-light btn-sm">New Consultation</a>
+    <a href="{% url 'billing:invoice_create_for_patient' patient.pk %}" class="btn btn-light btn-sm">New Invoice</a>
+    <a href="{% url 'appointments:appointment_create_for_patient' patient.pk %}" class="btn btn-light btn-sm">Book Appointment</a>
+  </div>
+</div>
+
+{% if patient.cheque_stop_bounce %}<div class="alert alert-danger">⚠ Cheque Stop / Bounce flagged for this patient.</div>{% endif %}
+
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card card-stat p-3">
+      <h6>Patient Info</h6>
+      <p class="mb-1"><b>Mobile:</b> {{ patient.mobile_number }}</p>
+      <p class="mb-1"><b>WhatsApp:</b> {{ patient.whatsapp_number|default:"—" }}</p>
+      <p class="mb-1"><b>Age/Gender:</b> {{ patient.age|default:"—" }} / {{ patient.get_gender_display }}</p>
+      <p class="mb-1"><b>Marital Status:</b> {{ patient.get_marital_status_display|default:"—" }}</p>
+      <p class="mb-1"><b>City/Area:</b> {{ patient.city }} / {{ patient.area }}</p>
+      <p class="mb-1"><b>Address:</b> {{ patient.address|default:"—" }}</p>
+      <p class="mb-1"><b>Email:</b> {{ patient.email|default:"—" }}</p>
+      <p class="mb-1"><b>Branch:</b> {{ patient.branch }}</p>
+      <p class="mb-1"><b>Source:</b> {{ patient.lead_source|default:"—" }} {% if patient.source_of_information %}({{ patient.source_of_information }}){% endif %}</p>
+      <p class="mb-1"><b>Treatments:</b> {{ patient.treatments|default:"—" }}</p>
+      <p class="mb-0"><b>Priority:</b> {{ patient.get_priority_display }}</p>
+    </div>
+
+    <div class="card card-stat p-3 mt-3">
+      <h6>Staff / Ownership</h6>
+      <p class="mb-1"><b>Unit Doctor:</b> {{ patient.assigned_doctor|default:"—" }}</p>
+      <p class="mb-1"><b>Senior Doctor:</b> {{ patient.senior_doctor|default:"—" }}</p>
+      <p class="mb-1"><b>Renewal Doctor:</b> {{ patient.renewal_doctor|default:"—" }}</p>
+      <p class="mb-1"><b>Enquiry Ownership:</b> {{ patient.enquiry_ownership|default:"—" }}</p>
+      <p class="mb-1"><b>Unit Ownership:</b> {{ patient.unit_ownership|default:"—" }}</p>
+      <p class="mb-1"><b>CRO Name:</b> {{ patient.cro_name|default:"—" }}</p>
+      <p class="mb-0"><b>Patient Reg By:</b> {{ patient.created_by|default:"—" }}</p>
+    </div>
+
+    <div class="card card-stat p-3 mt-3">
+      <h6>Registration / Package</h6>
+      <p class="mb-1"><b>Registration Date:</b> {{ patient.registration_date|default:"—" }}</p>
+      <p class="mb-1"><b>Package Amount:</b> {% if patient.package_amount %}₹{{ patient.package_amount }}{% else %}—{% endif %} {% if patient.package_duration_months %}/ {{ patient.package_duration_months }}M{% endif %}</p>
+      <p class="mb-1"><b>Registration End Date:</b> {{ patient.registration_end_date|default:"—" }}</p>
+      <p class="mb-1"><b>Renewal Date:</b> {{ patient.renewal_date|default:"—" }}</p>
+      <p class="mb-1"><b>Paid Amount:</b> ₹{{ patient.paid_amount }}</p>
+      <p class="mb-1"><b>Balance Due:</b> <span class="{% if patient.balance_due %}text-danger{% endif %}">₹{{ patient.balance_due }}</span></p>
+      <p class="mb-0"><b>Refund Amount:</b> ₹{{ patient.refund_amount }}</p>
+    </div>
+
+    <div class="card card-stat p-3 mt-3">
+      <h6>Family Members</h6>
+      <ul class="list-group list-group-flush mb-2">
+        {% for m in patient.family_members.all %}<li class="list-group-item small">{{ m.name }} — {{ m.relation }} {% if m.mobile_number %}({{ m.mobile_number }}){% endif %}</li>
+        {% empty %}<li class="list-group-item text-muted small">None added.</li>{% endfor %}
+      </ul>
+      <form method="post" class="row g-2">
+        {% csrf_token %}<input type="hidden" name="add_family" value="1">
+        <div class="col-12">{{ family_form.name }}</div>
+        <div class="col-6">{{ family_form.relation }}</div>
+        <div class="col-6">{{ family_form.mobile_number }}</div>
+        <div class="col-6">{{ family_form.age }}</div>
+        <div class="col-6">{{ family_form.notes }}</div>
+        <div class="col-12"><button class="btn btn-sm btn-outline-primary w-100">Add Family Member</button></div>
+      </form>
+    </div>
+
+    <div class="card card-stat p-3 mt-3">
+      <h6>Referrals</h6>
+      <ul class="list-group list-group-flush mb-2">
+        {% for r in referrals %}<li class="list-group-item small">{{ r.referred_name|default:"—" }} — {{ r.referred_mobile }}</li>
+        {% empty %}<li class="list-group-item text-muted small">None logged.</li>{% endfor %}
+      </ul>
+      <form method="post" class="row g-2">
+        {% csrf_token %}<input type="hidden" name="add_referral" value="1">
+        <div class="col-6">{{ referral_form.referred_name }}</div>
+        <div class="col-6">{{ referral_form.referred_mobile }}</div>
+        <div class="col-12">{{ referral_form.notes }}</div>
+        <div class="col-12"><button class="btn btn-sm btn-outline-primary w-100">Add Referral</button></div>
+      </form>
+    </div>
+
+    <div class="card card-stat p-3 mt-3">
+      <h6>Complaints</h6>
+      <ul class="list-group list-group-flush mb-2">
+        {% for c in complaints %}<li class="list-group-item small">{{ c.complaint|truncatewords:15 }} <span class="text-muted">({{ c.created_at|date:"d-m-Y" }})</span></li>
+        {% empty %}<li class="list-group-item text-muted small">None logged.</li>{% endfor %}
+      </ul>
+      <form method="post" class="row g-2">
+        {% csrf_token %}<input type="hidden" name="add_complaint" value="1">
+        <div class="col-12">{{ complaint_form.complaint }}</div>
+        <div class="col-12"><button class="btn btn-sm btn-outline-primary w-100">Log Complaint</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="col-md-8">
+    <div class="card card-stat p-3 mb-3">
+      <div class="d-flex justify-content-between"><h6>Consultation / Case Sheet History</h6>
+        <a href="{% url 'consultations:case_sheet_list' patient.pk %}" class="btn btn-sm btn-outline-secondary">Full Case Sheet</a>
+      </div>
+      <table class="table table-sm">
+        <thead><tr><th>Date</th><th>Doctor</th><th>Treatment</th><th>Status</th><th>Follow-up</th><th></th></tr></thead>
+        <tbody>
+        {% for c in consultations %}
+          <tr><td>{{ c.consulted_date }}</td><td>{{ c.doctor }}</td><td>{{ c.treatment|default:"—" }}</td>
+          <td>{{ c.get_patient_status_display }}</td><td>{{ c.followup_date|default:"—" }}</td>
+          <td><a href="{% url 'consultations:prescription_pdf' c.pk %}" target="_blank" class="btn btn-sm btn-outline-primary">Rx PDF</a></td></tr>
+        {% empty %}<tr><td colspan="6" class="text-muted">No consultations yet.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card card-stat p-3 mb-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <h6>Appointments</h6>
+        <a href="{% url 'patients:followup_create' patient.pk %}" class="btn btn-sm btn-outline-secondary">Log Follow-up Visit</a>
+      </div>
+      <table class="table table-sm">
+        <thead><tr><th>Date</th><th>Type</th><th>Slot</th><th>Doctor</th><th>Status</th></tr></thead>
+        <tbody>
+        {% for a in appointments %}
+          <tr><td>{{ a.appointment_date }}</td><td>{{ a.get_appt_type_display }}</td><td>{{ a.slot_time }}</td><td>{{ a.doctor }}</td>
+          <td><span class="badge text-bg-light border">{{ a.get_status_display }}</span></td></tr>
+        {% empty %}<tr><td colspan="5" class="text-muted">No appointments yet.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card card-stat p-3 mb-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <h6>Calling Logs</h6>
+        <a href="{% url 'patients:patient_log_call' patient.pk %}" class="btn btn-sm btn-outline-secondary">Log Call</a>
+      </div>
+      <table class="table table-sm">
+        <thead><tr><th>Date</th><th>By</th><th>Status</th><th>Comments</th><th>Better %</th><th>Medicine End</th><th>Next Call</th></tr></thead>
+        <tbody>
+        {% for l in calling_logs %}
+          <tr><td>{{ l.created_at|date:"d-m-Y H:i" }}</td><td>{{ l.called_by }}</td><td>{{ l.get_call_status_display }}</td>
+          <td>{{ l.comments|truncatewords:10 }}</td><td>{{ l.better_patient_percent|default:"—" }}{% if l.better_patient_percent %}%{% endif %}</td>
+          <td>{{ l.medicine_end_date|default:"—" }} {% if l.medicine_end_date %}<span class="text-muted small">({{ l.medicine_remainder_days }}d)</span>{% endif %}</td>
+          <td>{{ l.next_calling_date|default:"—" }}</td></tr>
+        {% empty %}<tr><td colspan="7" class="text-muted">No calls logged yet.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card card-stat p-3">
+      <h6>Invoices</h6>
+      <table class="table table-sm">
+        <thead><tr><th>Invoice #</th><th>Date</th><th>Total</th><th>Balance</th><th>Status</th></tr></thead>
+        <tbody>
+        {% for i in invoices %}
+          <tr><td><a href="{% url 'billing:invoice_detail' i.pk %}">{{ i.invoice_no }}</a></td><td>{{ i.invoice_date }}</td>
+          <td>₹{{ i.total_amount }}</td><td>₹{{ i.balance_due }}</td><td>{{ i.get_status_display }}</td></tr>
+        {% empty %}<tr><td colspan="5" class="text-muted">No invoices yet.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

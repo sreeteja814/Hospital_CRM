@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Follow-ups{% endblock %}
+{% block content %}
+<div class="page-header"><h5 class="mb-0">Follow-ups</h5></div>
+<div class="card card-stat">
+<table class="table table-hover mb-0">
+  <thead><tr><th>Patient</th><th>Visit Date</th><th>Reason</th><th>Recorded By</th></tr></thead>
+  <tbody>
+  {% for f in followups %}
+    <tr><td><a href="{% url 'patients:patient_detail' f.patient.pk %}">{{ f.patient.name }}</a></td><td>{{ f.visit_date }}</td><td>{{ f.reason }}</td><td>{{ f.recorded_by }}</td></tr>
+  {% empty %}<tr><td colspan="4" class="text-muted p-3">No follow-up visits logged yet.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}
